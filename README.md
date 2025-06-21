@@ -125,7 +125,7 @@ ShareXpress/
 ## 🌟 Author
 
 * **Developer:** [aid3n](https://github.com/PaluskarAditya)
-* **GitHub Repo:** [ShareXpress](https://github.com/sharexpress)
+* **GitHub Repo:** [ShareXpress](https://github.com/PaluskarAditya/sharexpress)
 
 ---
 
