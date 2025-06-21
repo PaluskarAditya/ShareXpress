@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 export default function App() {
   const [selectedFiles, setFiles] = useState([]);
   const fileInputRef = useRef(null);
+  const [isPasswordProtected, setPasswordStatus] = useState(false);
+  const [filePassword, setPassword] = useState('');
+  const [fileConfPassword, setConfPassword] = useState('');
   const nav = useNavigate();
 
   // ✅ ID Generation Function
@@ -23,25 +26,28 @@ export default function App() {
     const id = generateId();
 
     const formData = new FormData();
-    formData.append('file', selectedFiles[0]); // Send only the first file for now
-    formData.append('id', id); // Optional: pass the generated id to backend if needed
+    formData.append("file", selectedFiles[0]); // Send only the first file for now
+    formData.append("id", id); // Optional: pass the generated id to backend if needed
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URI}/api/upload`, {
-        method: 'POST',
-        headers: {
-          id: id
-        },
-        body: formData
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URI}/api/upload`,
+        {
+          method: "POST",
+          headers: {
+            id: id,
+          },
+          body: formData,
+        }
+      );
 
       const data = await res.json();
-      console.log('File uploaded successfully:', data);
+      console.log("File uploaded successfully:", data);
 
       // Navigate to the share page after upload
       nav(`/share/${id}`);
     } catch (err) {
-      console.error('Upload failed:', err);
+      console.error("Upload failed:", err);
     }
   };
 
@@ -68,7 +74,8 @@ export default function App() {
           <div className="flex flex-col items-center justify-center gap-3">
             <UploadIcon className="h-5 w-5 text-gray-400" />
             <p className="text-sm text-gray-600">
-              <span className="font-medium text-gray-900">Click to upload</span> or drag and drop
+              <span className="font-medium text-gray-900">Click to upload</span>{" "}
+              or drag and drop
             </p>
             <p className="text-xs text-gray-500">Any file type up to 50MB</p>
           </div>
@@ -81,6 +88,31 @@ export default function App() {
               <div className="text-gray-500 text-xs">
                 {(selectedFiles[0].size / (1024 * 1024)).toFixed(2)} MB
               </div>
+            </div>
+            <div className="flex flex-col gap-2 justify-center items-start">
+              <div className="flex gap-2">
+                <input
+                  onChange={(e) => setPasswordStatus(!isPasswordProtected)}
+                  type="checkbox"
+                  className="accent-gray-900"
+                />
+                <p className="font-light text-xs">password protect this file</p>
+              </div>
+
+              {isPasswordProtected && <div className="flex flex-col gap-1">
+                <input
+                  type="text"
+                  onChange={e => setPassword(e.target.value)}
+                  className="border border-gray-200 rounded-md text-xs p-1 px-2 outline-none"
+                  placeholder="enter password"
+                />
+                <input
+                  type="text"
+                  onChange={e => setConfPassword(e.target.value)}
+                  className="border border-gray-200 rounded-md text-xs p-1 px-2 outline-none"
+                  placeholder="confirm password"
+                />
+              </div>}
             </div>
 
             <button

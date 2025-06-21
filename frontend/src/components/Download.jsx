@@ -11,7 +11,7 @@ export default function DownloadPage() {
     const fetchFile = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URI}/api/download/${id}`,
+          `${import.meta.env.VITE_BACKEND_URI}/api/download`,
           {
             headers: {
               id: id,
@@ -19,7 +19,6 @@ export default function DownloadPage() {
           }
         );
         if (!res.ok) throw new Error("File not found");
-
         const data = await res.json();
         setFile(data.file);
       } catch (err) {
@@ -35,22 +34,17 @@ export default function DownloadPage() {
   const handleDownload = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URI}/api/download/${id}`,
-        {
-          headers: {
-            id: id,
-          },
-        }
+        `${import.meta.env.VITE_BACKEND_URI}/api/file/${id}`
       );
 
       if (!response.ok) {
-        throw new Error('Failed to download file');
+        throw new Error("Failed to download file");
       }
 
       // Get the filename from the content-disposition header or use the stored filename
-      const contentDisposition = response.headers.get('content-disposition');
+      const contentDisposition = response.headers.get("content-disposition");
       let filename = file.filename;
-      
+
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
         if (filenameMatch && filenameMatch[1]) {
@@ -61,7 +55,7 @@ export default function DownloadPage() {
       // Create a blob from the response and trigger download
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = filename;
       document.body.appendChild(a);
